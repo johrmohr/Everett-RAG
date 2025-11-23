@@ -1,0 +1,39 @@
+# Everett RAG System Configuration
+
+# ChromaDB Settings
+chroma:
+  persist_directory: "./chroma_db"
+  collection_name: "everett_manuscripts"
+
+# Document Processing
+processing:
+  chunk_size: 1000  # Characters per chunk
+  chunk_overlap: 200  # Overlap between chunks
+
+# Embedding Model (using free Sentence-Transformers)
+embeddings:
+  model_name: "all-MiniLM-L6-v2"  # Fast and efficient
+  # Alternative: "all-mpnet-base-v2" (better quality, slower)
+
+# LLM Settings (for local Ollama)
+llm:
+  provider: "ollama"  # Options: ollama, huggingface
+  model: "llama2"  # or "mistral", "phi", etc.
+  temperature: 0.7
+  max_tokens: 2000
+
+# API Settings
+api:
+  host: "127.0.0.1"
+  port: 8000
+
+# OCR Settings
+ocr:
+  input_dir: "./Manuscripts"
+  output_dir: "./processed_texts"
+  language: "eng"  # Tesseract language code
+
+# Logging
+logging:
+  level: "INFO"
+  log_dir: "./logs"

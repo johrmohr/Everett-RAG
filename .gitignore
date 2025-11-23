@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific
+chroma_db/
+processed_texts/*.txt
+logs/
+*.log
+.DS_Store
+
+# Config overrides
+config.local.yaml
+
+# Model cache
+.cache/
+models/
+
+# Test files
+test_chroma/
+*.test
+
+# Environment variables
+.env
+.env.local
