@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everett Manuscripts Explorer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚛</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css?v=9">
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Marked.js for markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="logo">
+            <span class="logo-text">Everett-RAG</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="nav-link active" data-view="chat">Chat</a>
+            <a href="#" class="nav-link" data-view="archive">Archive</a>
+            <a href="#" class="nav-link" data-view="about">About</a>
+        </nav>
+        <div class="header-spacer"></div>
+    </header>
+
+    <main class="container">
+        <!-- Chat View -->
+        <section id="chat-view" class="view active">
+            <h1 class="main-title">Explore the Everett Archives</h1>
+
+            <div id="chat-messages" class="chat-messages"></div>
+
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask about Everett's manuscripts...">
+            </div>
+
+            <div id="sample-questions" class="sample-questions">
+                <h3 class="sample-title">Try asking:</h3>
+                <div class="sample-grid">
+                    <button class="sample-btn" data-question="What was Everett's key insight about measurement?">What was Everett's key insight about measurement?</button>
+                    <button class="sample-btn" data-question="What is the 'relative state' formulation?">What is the 'relative state' formulation?</button>
+                    <button class="sample-btn" data-question="How did Wheeler respond to Everett's thesis?">How did Wheeler respond to Everett's thesis?</button>
+                    <button class="sample-btn" data-question="What criticisms did Everett's theory face?">What criticisms did Everett's theory face?</button>
+                </div>
+            </div>
+
+            <div class="chat-actions">
+                <button id="clear-btn" class="btn-secondary">Clear Conversation</button>
+            </div>
+        </section>
+
+        <!-- Archive View -->
+        <section id="archive-view" class="view">
+            <h1 class="main-title">Transcribed Documents</h1>
+            <p class="sub-title">These are the transcribed versions of Hugh Everett III's Manuscripts using Deepseek-OCR. There are many inaccuracies. View the original collection <a href="https://calisphere.org/collections/28/" target="_blank" class="link-blue">here</a>.</p>
+            
+            <div class="archive-filters">
+                <select id="filter-type" class="filter-select">
+                    <option value="All">All Types</option>
+                    <option value="Handwritten">Handwritten</option>
+                    <option value="Letter">Letter</option>
+                    <option value="Thesis">Thesis</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="filter-year" class="filter-select">
+                    <option value="All">All Years</option>
+                </select>
+                <input type="text" id="filter-search" class="filter-input" placeholder="Search titles...">
+            </div>
+            
+            <p id="doc-count" class="doc-count">Loading documents...</p>
+            
+            <div class="archive-layout">
+                <div id="doc-list" class="doc-list"></div>
+                <div id="doc-viewer" class="doc-viewer">
+                    <div class="doc-viewer-placeholder">Select a document to view</div>
+                </div>
+            </div>
+
+            <div class="source-collection-info">
+                <h3 class="source-collection-header">About the Source Collection</h3>
+                <p class="source-collection-text">The primary documents utilized in this system are part of the Hugh Everett III Manuscripts collection discovered in 2007 by investigative journalist Peter Byrne in the Los Angeles basement of Everett's son, Mark Oliver Everett, and edited and maintained by Jeffrey A. Barrett, Peter Byrne, and James O. Weatherall.</p>
+            </div>
+        </section>
+
+        <!-- About View -->
+        <section id="about-view" class="view">
+            <h1 class="main-title">About This Project</h1>
+            
+            <p class="section-text">
+                This project is designed to explore the intellectual history of <strong>Hugh Everett III</strong>, the physicist who fundamentally changed our understanding of reality. By combining modern OCR technology with Retrieval-Augmented Generation (RAG), this system allows you to converse with Everett's private manuscripts, drafts, and personal correspondence.
+            </p>
+
+            <h2 class="section-header">Hugh Everett III & the Many-Worlds Interpretation</h2>
+            <p class="section-text">
+                <a href="https://en.wikipedia.org/wiki/Hugh_Everett_III" target="_blank" class="link-blue"><strong>Hugh Everett III</strong></a> (1930–1982) was an American physicist who, as a graduate student at Princeton in 1956, proposed the Relative State formulation of quantum mechanics.
+            </p>
+            <p class="section-text">
+                In an era dominated by the Copenhagen Interpretation, which argued that the act of observation "collapses" a quantum wave into a single reality, Everett proposed something radical: the wave function never collapses. Instead, it continues to evolve, and every possible outcome of a quantum event occurs in a branching series of relative states.
+            </p>
+            <p class="section-text">
+                While his theory was largely ignored or ridiculed during his life, leading him to leave academia for a career in military defense analysis, it was later popularized as the <strong>Many-Worlds Interpretation (MWI)</strong>. Today, it is considered one of the most important and controversial pillars of modern physics.
+            </p>
+
+            <h2 class="section-header">The Archive</h2>
+            <p class="section-text">
+                For decades, many of Everett's original thoughts were hidden from the public. In 2007, investigative journalist <strong>Peter Byrne</strong> discovered a trove of documents in the Los Feliz basement of Everett's son, Mark Oliver Everett (the lead singer of the band Eels).
+            </p>
+            <p class="section-text">
+                These documents were digitized and organized by <a href="https://faculty.sites.uci.edu/jeffreybarrett/" target="_blank" class="link-blue"><strong>Professor Jeffrey Barrett</strong></a> (UC Irvine), the leading scholar on Everett's work. The collection includes:
+            </p>
+            <ul class="section-list">
+                <li><strong>The Long Thesis:</strong> The original, 137-page unedited draft of Everett's work, which contains philosophical metaphors and mathematical proofs that were sanitized or removed for his final 1957 publication.</li>
+                <li><strong>Handwritten minipapers:</strong> Early, raw notes where Everett first wrestled with the problem of probability and observers.</li>
+                <li><strong>Correspondence:</strong> Private letters between Everett, his advisor John Wheeler, and other physicists like Niels Bohr and Bryce DeWitt.</li>
+            </ul>
+
+            <h2 class="section-header">What is this RAG System?</h2>
+            <p class="section-text">
+                <strong>Retrieval-Augmented Generation (RAG)</strong> is an AI architecture that gives a Large Language Model (LLM) a long term memory composed of specific documents: in this case, the Everett Manuscripts.
+            </p>
+
+            <h2 class="section-header">DeepSeek-OCR</h2>
+            <p class="section-text">
+                The primary challenge of this project was the nature of the source material: 1950s-era handwritten notes, faded typewritten drafts, and complex mathematical notation. Traditional OCR tools often fail on these documents due to noise, low contrast, and non-standard layouts.
+            </p>
+            <p class="section-text">
+                To solve this, I utilized <a href="https://huggingface.co/deepseek-ai/DeepSeek-OCR" target="_blank" class="link-blue"><strong>DeepSeek-OCR</strong></a>, a cutting-edge Vision-Language Model (VLM). Unlike standard OCR, DeepSeek-OCR treats the entire page as a visual context, allowing it to "read" Everett's unique cursive and technical shorthand with high fidelity. It was specifically chosen for its ability to recognize and format scientific notation (LaTeX), ensuring that Everett's crucial derivations for the "Universal Wavefunction" remained intact during transcription. The model outputs Markdown, preserving the logical structure of the manuscripts including headers, bullet points, and equations, which is essential for the RAG system to understand the relationship between different ideas.
+            </p>
+
+            <h2 class="section-header">Google Colab for Students</h2>
+            <p class="section-text">
+                This project used free Google Colab for students for compute to process over 5,000 pages of high-resolution manuscript images. For more information, see <a href="https://blog.google/outreach-initiatives/education/colab-higher-education/?s=09" target="_blank" class="link-blue"><strong>here</strong></a>.
+            </p>
+        </section>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="/script.js?v=3"></script>
+</body>
+</html>
+

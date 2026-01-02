@@ -1,0 +1,28 @@
+# Everett RAG System Dependencies
+
+# AWS SDK
+boto3>=1.34.0
+
+# Vector Store
+faiss-cpu>=1.7.4
+
+# Text Processing
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-text-splitters>=0.0.1
+tiktoken>=0.5.0
+
+# Markdown Processing
+markdown>=3.5.0
+beautifulsoup4>=4.12.0
+
+# API Backend
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+numpy>=1.24.0
+
