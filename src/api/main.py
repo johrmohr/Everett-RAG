@@ -3,7 +3,7 @@ FastAPI backend for Everett RAG system
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
@@ -14,11 +14,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.rag.pipeline import get_rag, EverettRAG
-
-# Paths
-BASE_DIR = Path(__file__).parent.parent.parent
-STATIC_DIR = BASE_DIR / "static"
-MANUSCRIPTS_DIR = BASE_DIR / "transcribed_everett_manuscripts"
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -221,6 +216,15 @@ async def clear_conversation():
     return {"status": "cleared"}
 
 
+@app.get("/")
+async def root():
+    """Serve the frontend"""
+    static_path = Path(__file__).parent.parent.parent / "static" / "index.html"
+    if static_path.exists():
+        return FileResponse(static_path)
+    return {"message": "Frontend not found. API is running at /api"}
+
+
 @app.get("/api")
 async def api_info():
     """API info endpoint"""
@@ -232,113 +236,69 @@ async def api_info():
             "/chat/stream": "POST - Send a message and get a streaming response",
             "/conversation": "GET - Get conversation history",
             "/conversation/clear": "POST - Clear conversation",
-            "/health": "GET - Health check",
-            "/documents": "GET - List all documents",
-            "/documents/{filename}": "GET - Get document content"
+            "/documents": "GET - List all manuscripts",
+            "/documents/{filename}": "GET - Get manuscript content",
+            "/health": "GET - Health check"
         }
     }
 
 
-# ===== DOCUMENT ENDPOINTS =====
-class Document(BaseModel):
-    filename: str
-    title: str
-    type: str
-    year: str
+import re
 
-class DocumentContent(BaseModel):
-    filename: str
-    title: str
-    type: str
-    year: str
-    content: str
+def parse_doc_metadata(filename: str) -> Dict[str, str]:
+    """Extract metadata from filename"""
+    title = filename.replace(".md", "").replace("_", " ")
 
-
-def get_doc_metadata(filepath: Path) -> Dict[str, str]:
-    """Extract metadata from document filename"""
-    name = filepath.stem
-    
-    # Determine document type
+    # Detect document type
     doc_type = "Other"
-    if "Handwritten" in name:
+    if "Handwritten" in filename:
         doc_type = "Handwritten"
-    elif " to " in name:
+    elif "Letter" in filename or " to " in filename:
         doc_type = "Letter"
-    elif "thesis" in name.lower():
+    elif "Thesis" in filename or "thesis" in filename:
         doc_type = "Thesis"
-    
+
     # Extract year
-    year = "—"
-    for y in range(1950, 1990):
-        if str(y) in name:
-            year = str(y)
-            break
-    
-    return {
-        "filename": filepath.name,
-        "title": name,
-        "type": doc_type,
-        "year": year
-    }
+    year_match = re.search(r'(19\d{2})', filename)
+    year = year_match.group(1) if year_match else "—"
+
+    return {"title": title, "doc_type": doc_type, "year": year, "filename": filename}
 
 
-@app.get("/documents", response_model=List[Document])
+@app.get("/documents")
 async def list_documents():
     """List all available manuscripts"""
-    if not MANUSCRIPTS_DIR.exists():
-        return []
-    
+    manuscripts_dir = Path(__file__).parent.parent.parent / "transcribed_everett_manuscripts"
+
+    if not manuscripts_dir.exists():
+        raise HTTPException(status_code=404, detail="Manuscripts directory not found")
+
     documents = []
-    for f in sorted(MANUSCRIPTS_DIR.glob("*.md")):
-        meta = get_doc_metadata(f)
-        documents.append(Document(**meta))
-    
+    for f in sorted(manuscripts_dir.glob("*.md")):
+        documents.append(parse_doc_metadata(f.name))
+
     return documents
 
 
-@app.get("/documents/{filename}", response_model=DocumentContent)
+@app.get("/documents/{filename:path}")
 async def get_document(filename: str):
-    """Get a specific document's content"""
-    filepath = MANUSCRIPTS_DIR / filename
-    
-    if not filepath.exists() or not filepath.is_file():
+    """Get the content of a specific manuscript"""
+    manuscripts_dir = Path(__file__).parent.parent.parent / "transcribed_everett_manuscripts"
+    file_path = manuscripts_dir / filename
+
+    if not file_path.exists():
         raise HTTPException(status_code=404, detail="Document not found")
-    
-    try:
-        content = filepath.read_text(encoding='utf-8')
-        meta = get_doc_metadata(filepath)
-        return DocumentContent(content=content, **meta)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    content = file_path.read_text(encoding="utf-8")
+    metadata = parse_doc_metadata(filename)
+
+    return {"content": content, **metadata}
 
 
-# ===== STATIC FILES =====
-# Serve the frontend
-@app.get("/")
-async def serve_frontend():
-    """Serve the main frontend page"""
-    index_path = STATIC_DIR / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
-    return {"message": "Frontend not found. API is running at /api"}
-
-
-# Mount static files (CSS, JS)
-if STATIC_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-    # Also serve static files from root for convenience
-    @app.get("/{filename:path}")
-    async def serve_static(filename: str):
-        """Serve static files"""
-        # Check for static files
-        static_path = STATIC_DIR / filename
-        if static_path.exists() and static_path.is_file():
-            return FileResponse(static_path)
-        # Fall back to index.html for SPA routing
-        index_path = STATIC_DIR / "index.html"
-        if index_path.exists():
-            return FileResponse(index_path)
-        raise HTTPException(status_code=404, detail="Not found")
+# Mount static files (must be after all routes)
+static_dir = Path(__file__).parent.parent.parent / "static"
+if static_dir.exists():
+    app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
 
 if __name__ == "__main__":

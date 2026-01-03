@@ -136,9 +136,9 @@ function renderMessages() {
                             View ${msgSources.length} sources
                         </button>
                         <div class="sources-list" id="sources-${index}">
-                            ${msgSources.map(s => `
+                            ${msgSources.map((s, i) => `
                                 <div class="source-item">
-                                    <div class="source-title">${escapeHtml(s.title)} <span class="source-relevance">— ${(s.relevance * 100).toFixed(0)}%</span></div>
+                                    <div class="source-title"><span class="source-number">${i + 1}.</span> ${escapeHtml(s.title)} <span class="source-relevance">— ${(s.relevance * 100).toFixed(0)}%</span></div>
                                     <div class="source-excerpt">${escapeHtml(s.excerpt.substring(0, 200))}...</div>
                                 </div>
                             `).join('')}

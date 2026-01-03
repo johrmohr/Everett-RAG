@@ -1,16 +1,3 @@
-# Claude Code
-.claude/
-
-# Deployment files
-deploy.sh
-docker-compose.yml
-docker-compose.override.yml
-Dockerfile
-nginx/
-
-# Generated data (rebuild with ingest.py)
-data/
-
 # Python
 __pycache__/
 *.py[cod]
@@ -61,7 +48,8 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Docker (additional)
+# Docker
+docker-compose.override.yml
 
 # SSL certificates (keep the directory structure but not certs)
 nginx/ssl/*.pem

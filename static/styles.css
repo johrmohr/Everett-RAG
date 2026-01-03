@@ -293,6 +293,12 @@ body {
     color: var(--text-primary);
 }
 
+.source-number {
+    color: var(--accent-beige);
+    font-weight: 700;
+    margin-right: 0.25rem;
+}
+
 .source-relevance {
     font-family: var(--font-mono);
     font-size: 0.75rem;

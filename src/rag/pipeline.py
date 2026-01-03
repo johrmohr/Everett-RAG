@@ -99,7 +99,16 @@ class EverettRAG:
             candidate_pool=15,  # Fetch 15 candidates
             max_results=8       # Return at most 8
         )
-        
+
+        # If no results pass threshold, fall back to top-k with lower threshold
+        if not results:
+            results = self.retriever.search_with_threshold(
+                question,
+                min_similarity=0.20,  # Lower threshold
+                candidate_pool=15,
+                max_results=5
+            )
+
         # Format context for the LLM
         context = format_context(results)
         
@@ -162,6 +171,16 @@ class EverettRAG:
             candidate_pool=15,
             max_results=8
         )
+
+        # If no results pass threshold, fall back to lower threshold
+        if not results:
+            results = self.retriever.search_with_threshold(
+                question,
+                min_similarity=0.20,
+                candidate_pool=15,
+                max_results=5
+            )
+
         context = format_context(results)
         history = self.session.get_history_for_llm()
         
