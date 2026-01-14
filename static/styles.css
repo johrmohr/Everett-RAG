@@ -632,6 +632,24 @@ body {
     color: var(--text-primary);
 }
 
+.source-collection-list {
+    list-style: disc;
+    margin: 0.75rem 0 0 1.25rem;
+    padding: 0;
+}
+
+.source-collection-list li {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.source-collection-list li:last-child {
+    margin-bottom: 0;
+}
+
 /* ===== LOADING ===== */
 .loading {
     position: fixed;
