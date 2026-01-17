@@ -89,7 +89,7 @@
                 <p class="source-collection-text">The primary documents utilized in this system are part of the Hugh Everett III Manuscripts collection.</p>
                 <ul class="source-collection-list">
                     <li>
-                        <strong>Discovery & Editorial Credit:</strong> This archive was discovered in 2007 by <a href="https://www.peterbyrne.info" target="_blank" class="link-blue">Peter Byrne</a> and is edited and maintained by <a href="https://faculty.sites.uci.edu/jeffreybarrett/" target="_blank" class="link-blue">Jeffrey A. Barrett</a>, Peter Byrne, <a href="https://jamesowenweatherall.com" target="_blank" class="link-blue">James O. Weatherall</a>, and <a href="https://samuelcfletcher.com" target="_blank" class="link-blue">Samuel C. Fletcher</a>.
+                        <strong>Discovery & Editorial Credit:</strong> This archive was discovered in 2007 by <a href="https://www.peterbyrne.info" target="_blank" class="link-blue">Peter Byrne</a>. It is edited by <a href="https://faculty.sites.uci.edu/jeffreybarrett/" target="_blank" class="link-blue">Jeffrey A. Barrett</a>, Peter Byrne, and <a href="https://jamesowenweatherall.com" target="_blank" class="link-blue">James O. Weatherall</a>, and maintained by Barrett and Byrne.
                     </li>
                     <li>
                         <strong>Rights & Permissions:</strong> The original physical documents were donated to the <a href="https://history.aip.org/ead/20130435.html" target="_blank" class="link-blue">American Institute of Physics (AIP)</a>. Intellectual property rights and copyrighted materials are held by the Everett Estate.
@@ -107,9 +107,20 @@
         <!-- About View -->
         <section id="about-view" class="view">
             <h1 class="main-title">About This Project</h1>
-            
+
             <p class="section-text">
-                This project is designed to explore the intellectual history of <strong>Hugh Everett III</strong>, the physicist who fundamentally changed our understanding of reality. By combining modern OCR technology with Retrieval-Augmented Generation (RAG), this system allows you to converse with Everett's private manuscripts, drafts, and personal correspondence.
+                The model was trained on original documents including draft and final versions of Everett's long and short Ph.D. theses, his early notes that led to these published works, his correspondence regarding his relative state formulation of pure wave mechanics, and miscellaneous biographical material. These documents were discovered by investigative journalist <a href="https://www.peterbyrne.info" target="_blank" class="link-blue"><strong>Peter Byrne</strong></a>, Petaluma, CA in 2007 in the Los Angeles basement of Everett's son, Mark Everett. The original documents were digitized with support from National Science Foundation Grant #0924135. The collection is edited by <a href="https://faculty.sites.uci.edu/jeffreybarrett/" target="_blank" class="link-blue"><strong>Jeffrey A. Barrett</strong></a>, Peter Byrne, and <a href="https://jamesowenweatherall.com" target="_blank" class="link-blue"><strong>James O. Weatherall</strong></a>. It is housed at the University of California Calisphere and can be found at <a href="https://calisphere.org/collections/28/" target="_blank" class="link-blue">https://calisphere.org/collections/28/</a>. This project is designed to explore the intellectual history of Hugh Everett III via Retrieval-Augmented Generation (RAG) by allowing you to converse with his private manuscripts, drafts, and personal correspondence.
+            </p>
+
+            <h2 class="section-header">How It Works</h2>
+            <p class="section-text">
+                Retrieval-Augmented Generation (RAG) is an AI architecture that gives Large Language Models (LLMs) access to specific documents at query time: in this case, the Everett Manuscripts. The responses are generated with Claude 3 Haiku by retrieving relevant information directly from Everett's manuscripts before answering. The manuscripts are split into sections called chunks—small passages of roughly 250 tokens each that preserve semantic coherence.
+            </p>
+            <p class="section-text">
+                These chunks are converted into numerical representations called embeddings using Amazon Titan Embed Text v2, a model that encodes text as 1024-dimensional vectors. These vectors capture semantic meaning: chunks about similar topics will have vectors that are close together in this high-dimensional space. All 4,221 chunk embeddings are stored in a FAISS index, an efficient similarity search library.
+            </p>
+            <p class="section-text">
+                When you ask a question, that question is also converted into an embedding using the same Titan model. FAISS then finds the chunks whose embeddings are most similar to your question's embedding using cosine similarity. The most relevant chunks—those that pass a similarity threshold—are then passed to Claude 3 Haiku as context, along with your question. Claude reads this context and generates an answer grounded in Everett's actual words, citing the specific manuscripts where the information was found.
             </p>
 
             <h2 class="section-header">Hugh Everett III & the Many-Worlds Interpretation</h2>
@@ -120,26 +131,18 @@
                 In an era dominated by the Copenhagen Interpretation, which argued that the act of observation "collapses" a quantum wave into a single reality, Everett proposed something radical: the wave function never collapses. Instead, it continues to evolve, and every possible outcome of a quantum event occurs in a branching series of relative states.
             </p>
             <p class="section-text">
-                While his theory was largely ignored or ridiculed during his life, leading him to leave academia for a career in military defense analysis, it was later popularized as the <strong>Many-Worlds Interpretation (MWI)</strong>. Today, it is considered one of the most important and controversial pillars of modern physics.
+                While his theory was largely ignored or ridiculed during his life, leading him to leave academia for a career in military defense analysis, it was later popularized as the <strong>Many-Worlds Interpretation</strong>. Today, it is considered one of the most important and controversial pillars of modern physics.
             </p>
 
             <h2 class="section-header">The Archive</h2>
             <p class="section-text">
-                For decades, many of Everett's original thoughts were hidden from the public. In 2007, investigative journalist <a href="https://www.peterbyrne.info" target="_blank" class="link-blue"><strong>Peter Byrne</strong></a> discovered a trove of documents in the Los Feliz basement of Everett's son, Mark Oliver Everett (the lead singer of the band Eels).
-            </p>
-            <p class="section-text">
-                These documents were preserved, digitized, and organized through a collaborative effort led by <a href="https://faculty.sites.uci.edu/jeffreybarrett/" target="_blank" class="link-blue"><strong>Jeffrey A. Barrett</strong></a> (UC Irvine), alongside Peter Byrne, <a href="https://jamesowenweatherall.com" target="_blank" class="link-blue"><strong>James O. Weatherall</strong></a> (UC Irvine), and <a href="https://samuelcfletcher.com" target="_blank" class="link-blue"><strong>Samuel C. Fletcher</strong></a> (University of Minnesota). This archival project was supported by the University of California and the National Science Foundation. The digital collection includes:
+                The digital collection includes:
             </p>
             <ul class="section-list">
                 <li><strong>The Long Thesis:</strong> The original, 137-page unedited draft of Everett's work, which contains philosophical metaphors and mathematical proofs that were sanitized or removed for his final 1957 publication.</li>
                 <li><strong>Handwritten minipapers:</strong> Early, raw notes where Everett first wrestled with the problem of probability and observers.</li>
                 <li><strong>Correspondence:</strong> Private letters between Everett, his advisor John Wheeler, and other physicists like Niels Bohr and Bryce DeWitt.</li>
             </ul>
-
-            <h2 class="section-header">What is this RAG System?</h2>
-            <p class="section-text">
-                <strong>Retrieval-Augmented Generation (RAG)</strong> is an AI architecture that gives a Large Language Model (LLM) a long term memory composed of specific documents: in this case, the Everett Manuscripts.
-            </p>
 
             <h2 class="section-header">DeepSeek-OCR</h2>
             <p class="section-text">
@@ -153,6 +156,34 @@
             <p class="section-text">
                 This project used free Google Colab for students for compute to process over 5,000 pages of high-resolution manuscript images. For more information, see <a href="https://blog.google/outreach-initiatives/education/colab-higher-education/?s=09" target="_blank" class="link-blue"><strong>here</strong></a>.
             </p>
+
+            <h2 class="section-header">System Prompt</h2>
+            <p class="section-text system-prompt-description">
+                This is the system prompt used in this project. It gives Claude the instructions needed to understand the context of the questions it's being asked. You can try changing it to see how it affects the responses. View the GitHub <a href="https://github.com/johrmohr/Everett-RAG" target="_blank" class="link-blue"><strong>here</strong></a>.
+            </p>
+            <textarea id="system-prompt-input" class="system-prompt-textarea">You are a friendly guide helping researchers and students explore Hugh Everett III's manuscripts and the development of the Many-Worlds Interpretation of quantum mechanics.
+
+You have access to Everett's original handwritten drafts, thesis versions, correspondence with physicists like John Wheeler and Bryce DeWitt, and various notes from 1955-1957.
+
+When answering questions about the manuscripts:
+1. Ground your responses in the manuscript content provided
+2. Quote relevant passages when helpful
+3. Cite specific documents (e.g., "In his handwritten draft from 1955...")
+4. Explain historical and scientific context when relevant
+
+IMPORTANT: If the user asks a general question like "What's this?", "Hello", "Hi", or anything not specifically about the manuscripts, DO NOT apologize or ask them to provide excerpts. Instead, warmly welcome them and explain:
+
+"Welcome! This is an interactive tool for exploring Hugh Everett III's original manuscripts on quantum mechanics. Everett developed the Many-Worlds Interpretation in the 1950s, proposing that the quantum wave function never collapses—instead, all possible outcomes occur in branching parallel realities.
+
+You can ask me questions like:
+• What was Everett's key insight about measurement?
+• What is the 'relative state' formulation?
+• How did Wheeler respond to Everett's thesis?
+• What criticisms did Everett's theory face?"
+
+Never say things like "I don't have any excerpts" or "please provide manuscript content." The system automatically retrieves relevant content—if none is found, just answer helpfully based on what you know about Everett.</textarea>
+            <button id="use-system-prompt-btn" class="btn-primary system-prompt-btn">Use this system prompt</button>
+            <button id="reset-system-prompt-btn" class="btn-secondary system-prompt-btn">Reset to default</button>
         </section>
     </main>
 

@@ -69,7 +69,8 @@ class EverettRAG:
         self,
         question: str,
         include_sources: bool = True,
-        min_similarity: float = 0.35
+        min_similarity: float = 0.35,
+        system_prompt: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Process a user query and generate a response.
@@ -119,19 +120,26 @@ class EverettRAG:
         answer = self.generator.generate(
             query=question,
             context=context,
-            conversation_history=history
+            conversation_history=history,
+            system_prompt=system_prompt
         )
         
         # Extract source information
         sources = []
         if include_sources:
             for chunk, score in results:
+                title = chunk.metadata.get("title", "Unknown")
+                # Get filename from metadata, or construct from title
+                filename = chunk.metadata.get("filename", "")
+                if not filename and title != "Unknown":
+                    filename = title + ".md"
                 sources.append({
-                    "title": chunk.metadata.get("title", "Unknown"),
+                    "title": title,
                     "doc_type": chunk.metadata.get("doc_type", "unknown"),
                     "year": chunk.metadata.get("year", "unknown"),
                     "relevance": round(score, 3),
-                    "excerpt": chunk.content[:300] + "..." if len(chunk.content) > 300 else chunk.content
+                    "excerpt": chunk.content[:300] + "..." if len(chunk.content) > 300 else chunk.content,
+                    "filename": filename
                 })
         
         # Add assistant response to session
@@ -197,12 +205,18 @@ class EverettRAG:
         # Extract sources
         sources = []
         for chunk, score in results:
+            title = chunk.metadata.get("title", "Unknown")
+            # Get filename from metadata, or construct from title
+            filename = chunk.metadata.get("filename", "")
+            if not filename and title != "Unknown":
+                filename = title + ".md"
             sources.append({
-                "title": chunk.metadata.get("title", "Unknown"),
+                "title": title,
                 "doc_type": chunk.metadata.get("doc_type", "unknown"),
                 "year": chunk.metadata.get("year", "unknown"),
                 "relevance": round(score, 3),
-                "excerpt": chunk.content[:300] + "..."
+                "excerpt": chunk.content[:300] + "...",
+                "filename": filename
             })
         
         # Add to session

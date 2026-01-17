@@ -15,7 +15,7 @@ from config import AWS_REGION, LLM_MODEL_ID, MAX_TOKENS, TEMPERATURE, SYSTEM_PRO
 
 class EverettGenerator:
     """Handles text generation using AWS Bedrock Claude"""
-    
+
     def __init__(
         self,
         region: str = AWS_REGION,
@@ -26,13 +26,20 @@ class EverettGenerator:
             region_name=region,
             retries={"max_attempts": 3, "mode": "adaptive"}
         )
-        
+
         self.client = boto3.client(
             service_name="bedrock-runtime",
             config=config
         )
         self.model_id = model_id
-        self.system_prompt = SYSTEM_PROMPT
+
+    @property
+    def system_prompt(self):
+        """Always read fresh from config"""
+        import importlib
+        import config
+        importlib.reload(config)
+        return config.SYSTEM_PROMPT
         
     def generate(
         self,
@@ -40,7 +47,8 @@ class EverettGenerator:
         context: str,
         conversation_history: Optional[List[Dict[str, str]]] = None,
         max_tokens: int = MAX_TOKENS,
-        temperature: float = TEMPERATURE
+        temperature: float = TEMPERATURE,
+        system_prompt: Optional[str] = None
     ) -> str:
         """
         Generate a response using Claude with RAG context.
@@ -63,7 +71,9 @@ class EverettGenerator:
             messages.extend(conversation_history)
         
         # Build the user message with context
-        user_message = f"""Based on the following excerpts from Hugh Everett III's manuscripts, please answer the question.
+        # Use different template depending on whether we have relevant context
+        if context and context.strip() and "No relevant" not in context:
+            user_message = f"""Based on the following excerpts from Hugh Everett III's manuscripts, please answer the question.
 
 ## Relevant Manuscript Excerpts:
 {context}
@@ -72,6 +82,9 @@ class EverettGenerator:
 {query}
 
 Please provide a thoughtful answer based on the manuscript content. Cite specific sources when possible."""
+        else:
+            # No relevant excerpts found - let the system prompt guide the response
+            user_message = f"""{query}"""
         
         messages.append({
             "role": "user",
@@ -79,11 +92,13 @@ Please provide a thoughtful answer based on the manuscript content. Cite specifi
         })
         
         # Prepare the request body for Claude
+        # Use custom system prompt if provided, otherwise use default
+        effective_system_prompt = system_prompt if system_prompt else self.system_prompt
         body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": max_tokens,
             "temperature": temperature,
-            "system": self.system_prompt,
+            "system": effective_system_prompt,
             "messages": messages
         }
         
@@ -114,11 +129,13 @@ Please provide a thoughtful answer based on the manuscript content. Cite specifi
             Chunks of generated text
         """
         messages = []
-        
+
         if conversation_history:
             messages.extend(conversation_history)
-        
-        user_message = f"""Based on the following excerpts from Hugh Everett III's manuscripts, please answer the question.
+
+        # Use different template depending on whether we have relevant context
+        if context and context.strip() and "No relevant" not in context:
+            user_message = f"""Based on the following excerpts from Hugh Everett III's manuscripts, please answer the question.
 
 ## Relevant Manuscript Excerpts:
 {context}
@@ -127,12 +144,15 @@ Please provide a thoughtful answer based on the manuscript content. Cite specifi
 {query}
 
 Please provide a thoughtful answer based on the manuscript content. Cite specific sources when possible."""
-        
+        else:
+            # No relevant excerpts found - let the system prompt guide the response
+            user_message = f"""{query}"""
+
         messages.append({
             "role": "user",
             "content": user_message
         })
-        
+
         body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": max_tokens,

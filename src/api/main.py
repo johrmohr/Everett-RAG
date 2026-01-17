@@ -35,6 +35,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     message: str
     include_sources: bool = True
+    system_prompt: Optional[str] = None
     
 class Source(BaseModel):
     title: str
@@ -42,6 +43,7 @@ class Source(BaseModel):
     year: str
     relevance: float
     excerpt: str
+    filename: str = ""
 
 class ChatResponse(BaseModel):
     answer: str
@@ -58,7 +60,6 @@ class HealthResponse(BaseModel):
     status: str
     loaded: bool
     chunks_count: int
-
 
 # Global RAG instance
 rag: Optional[EverettRAG] = None
@@ -111,9 +112,17 @@ async def chat(request: ChatRequest):
         if not rag._loaded:
             rag.load()
         
+        # Log if custom system prompt is being used
+        if request.system_prompt:
+            print(f"Using custom system prompt: {request.system_prompt[:50]}...")
+        else:
+            from config import SYSTEM_PROMPT
+            print(f"Using default system prompt: {SYSTEM_PROMPT[:80]}...")
+
         result = rag.query(
             question=request.message,
-            include_sources=request.include_sources
+            include_sources=request.include_sources,
+            system_prompt=request.system_prompt
         )
         
         return ChatResponse(

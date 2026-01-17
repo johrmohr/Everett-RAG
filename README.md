@@ -1,6 +1,14 @@
 # About This Project
 
-This project is designed to explore the intellectual history of **Hugh Everett III**, the physicist who fundamentally changed our understanding of reality. By combining modern OCR technology with Retrieval-Augmented Generation (RAG), this system allows you to converse with Everett's private manuscripts, drafts, and personal correspondence.
+The model was trained on original documents including draft and final versions of Everett's long and short Ph.D. theses, his early notes that led to these published works, his correspondence regarding his relative state formulation of pure wave mechanics, and miscellaneous biographical material. These documents were discovered by investigative journalist [**Peter Byrne**](https://www.peterbyrne.info), Petaluma, CA in 2007 in the Los Angeles basement of Everett's son, Mark Everett. The original documents were digitized with support from National Science Foundation Grant #0924135. The collection is edited by [**Jeffrey A. Barrett**](https://faculty.sites.uci.edu/jeffreybarrett/), Peter Byrne, and [**James O. Weatherall**](https://jamesowenweatherall.com). It is housed at the University of California Calisphere and can be found at https://calisphere.org/collections/28/. This project is designed to explore the intellectual history of Hugh Everett III via Retrieval-Augmented Generation (RAG) by allowing you to converse with his private manuscripts, drafts, and personal correspondence.
+
+## How It Works
+
+Retrieval-Augmented Generation (RAG) is an AI architecture that gives Large Language Models (LLMs) access to specific documents at query time: in this case, the Everett Manuscripts. The responses are generated with Claude 3 Haiku by retrieving relevant information directly from Everett's manuscripts before answering. The manuscripts are split into sections called chunks—small passages of roughly 250 tokens each that preserve semantic coherence.
+
+These chunks are converted into numerical representations called embeddings using Amazon Titan Embed Text v2, a model that encodes text as 1024-dimensional vectors. These vectors capture semantic meaning: chunks about similar topics will have vectors that are close together in this high-dimensional space. All 4,221 chunk embeddings are stored in a FAISS index, an efficient similarity search library.
+
+When you ask a question, that question is also converted into an embedding using the same Titan model. FAISS then finds the chunks whose embeddings are most similar to your question's embedding using cosine similarity. The most relevant chunks—those that pass a similarity threshold—are then passed to Claude 3 Haiku as context, along with your question. Claude reads this context and generates an answer grounded in Everett's actual words, citing the specific manuscripts where the information was found.
 
 ## Hugh Everett III & the Many-Worlds Interpretation
 
@@ -8,21 +16,15 @@ This project is designed to explore the intellectual history of **Hugh Everett I
 
 In an era dominated by the Copenhagen Interpretation, which argued that the act of observation "collapses" a quantum wave into a single reality, Everett proposed something radical: the wave function never collapses. Instead, it continues to evolve, and every possible outcome of a quantum event occurs in a branching series of relative states.
 
-While his theory was largely ignored or ridiculed during his life, leading him to leave academia for a career in military defense analysis, it was later popularized as the **Many-Worlds Interpretation (MWI)**. Today, it is considered one of the most important and controversial pillars of modern physics.
+While his theory was largely ignored or ridiculed during his life, leading him to leave academia for a career in military defense analysis, it was later popularized as the **Many-Worlds Interpretation**. Today, it is considered one of the most important and controversial pillars of modern physics.
 
 ## The Archive
 
-For decades, many of Everett's original thoughts were hidden from the public. In 2007, investigative journalist **Peter Byrne** discovered a trove of documents in the Los Feliz basement of Everett's son, Mark Oliver Everett (the lead singer of the band Eels).
-
-These documents were digitized and organized by [**Professor Jeffrey Barrett**](https://faculty.sites.uci.edu/jeffreybarrett/) (UC Irvine), the leading scholar on Everett's work. The collection includes:
+The digital collection includes:
 
 - **The Long Thesis:** The original, 137-page unedited draft of Everett's work, which contains philosophical metaphors and mathematical proofs that were sanitized or removed for his final 1957 publication.
 - **Handwritten minipapers:** Early, raw notes where Everett first wrestled with the problem of probability and observers.
 - **Correspondence:** Private letters between Everett, his advisor John Wheeler, and other physicists like Niels Bohr and Bryce DeWitt.
-
-## What is this RAG System?
-
-**Retrieval-Augmented Generation (RAG)** is an AI architecture that gives a Large Language Model (LLM) a long term memory composed of specific documents: in this case, the Everett Manuscripts.
 
 ## DeepSeek-OCR
 
