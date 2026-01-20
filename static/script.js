@@ -150,7 +150,7 @@ function renderMessages() {
             if (isFirstAssistantMsg) {
                 ragInfoHtml = `
                     <div class="rag-info-text">
-                        This answer is generated with Claude 3 Haiku (via AWS Bedrock) by retrieving relevant information directly from Everett's manuscripts before answering. <a href="#" onclick="switchView('about'); return false;" class="link-blue">Learn more here</a>.
+                        This answer is generated with Claude 3 Haiku (via AWS Bedrock) by retrieving relevant information directly from Everett's manuscripts before answering. <a href="#" onclick="switchView('about'); return false;" class="link-blue">Learn more</a>.
                     </div>
                 `;
                 isFirstAssistantMsg = false;
@@ -492,7 +492,7 @@ function highlightAndScrollToExcerpt(excerpt) {
     let found = false;
 
     // Try to find and highlight the excerpt text
-    // First try the full excerpt, then progressively shorter portions
+    // First try the full excerpt, then progressively shorter portions to locate it
     let searchLengths = [excerptText.length, 80, 60, 40];
 
     for (let len of searchLengths) {
@@ -509,10 +509,62 @@ function highlightAndScrollToExcerpt(excerpt) {
             const matchIndex = nodeText.toLowerCase().indexOf(searchText.toLowerCase());
 
             if (matchIndex !== -1) {
-                // Found the text in this node - highlight it
-                const before = nodeText.substring(0, matchIndex);
-                const match = nodeText.substring(matchIndex, matchIndex + searchText.length);
-                const after = nodeText.substring(matchIndex + searchText.length);
+                // Found the text in this node - now highlight as much of the full excerpt as possible
+                // Try to match the full excerpt from this position, or find sentence boundaries
+                let highlightStart = matchIndex;
+                let highlightEnd = matchIndex + searchText.length;
+
+                // Try to extend the highlight to match more of the excerpt
+                const remainingExcerpt = excerptText.toLowerCase();
+                const nodeTextLower = nodeText.toLowerCase();
+
+                // Check how much of the full excerpt we can match from this position
+                let matchLen = 0;
+                while (matchLen < excerptText.length &&
+                       matchIndex + matchLen < nodeText.length &&
+                       nodeTextLower[matchIndex + matchLen] === remainingExcerpt[matchLen]) {
+                    matchLen++;
+                }
+
+                if (matchLen > searchText.length) {
+                    highlightEnd = matchIndex + matchLen;
+                }
+
+                // Extend to sentence boundaries if the match is short
+                // Look backwards for sentence start (., !, ?, or start of text)
+                if (highlightEnd - highlightStart < 100) {
+                    let sentenceStart = highlightStart;
+                    for (let i = highlightStart - 1; i >= 0 && i > highlightStart - 200; i--) {
+                        const char = nodeText[i];
+                        if (char === '.' || char === '!' || char === '?' || char === '\n') {
+                            sentenceStart = i + 1;
+                            // Skip whitespace after punctuation
+                            while (sentenceStart < highlightStart && /\s/.test(nodeText[sentenceStart])) {
+                                sentenceStart++;
+                            }
+                            break;
+                        }
+                        sentenceStart = i;
+                    }
+
+                    // Look forwards for sentence end
+                    let sentenceEnd = highlightEnd;
+                    for (let i = highlightEnd; i < nodeText.length && i < highlightEnd + 200; i++) {
+                        const char = nodeText[i];
+                        if (char === '.' || char === '!' || char === '?') {
+                            sentenceEnd = i + 1;
+                            break;
+                        }
+                        sentenceEnd = i + 1;
+                    }
+
+                    highlightStart = sentenceStart;
+                    highlightEnd = sentenceEnd;
+                }
+
+                const before = nodeText.substring(0, highlightStart);
+                const match = nodeText.substring(highlightStart, highlightEnd);
+                const after = nodeText.substring(highlightEnd);
 
                 const wrapper = document.createElement('span');
                 wrapper.innerHTML = escapeHtml(before) +
