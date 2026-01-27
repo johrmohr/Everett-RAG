@@ -23,6 +23,22 @@
     --grid-color: rgba(255, 255, 255, 0.03);
 }
 
+/* Light Mode */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #e8e8e8;
+    --border-color: #d4d4d4;
+    --text-primary: #171717;
+    --text-secondary: #525252;
+    --text-muted: #737373;
+    --accent-primary: #262626;
+    --accent-beige: #737373;
+    --accent-beige-dark: #a3a3a3;
+    --accent-blue: #525252;
+    --grid-color: rgba(0, 0, 0, 0.03);
+}
+
 html {
     font-size: 16px;
 }
@@ -40,27 +56,26 @@ body {
 .site-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding: 1.25rem 2rem;
     background: transparent;
     border-bottom: 1px solid var(--border-color);
 }
 
-.logo {
-    display: none;
+.header-left {
+    flex: 1;
 }
 
-.logo-icon {
-    display: none;
-}
-
-.logo-text {
-    display: none;
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nav-links {
     display: flex;
     gap: 2.5rem;
+    justify-content: center;
 }
 
 .nav-link {
@@ -85,7 +100,38 @@ body {
     text-underline-offset: 4px;
 }
 
-.header-spacer {
+/* Theme Toggle */
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+.theme-toggle .sun-icon {
+    display: none;
+}
+
+.theme-toggle .moon-icon {
+    display: block;
+}
+
+[data-theme="light"] .theme-toggle .sun-icon {
+    display: block;
+}
+
+[data-theme="light"] .theme-toggle .moon-icon {
     display: none;
 }
 
@@ -130,6 +176,7 @@ body {
 #archive-view .main-title {
     margin-top: 0.5rem;
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 #archive-view {
@@ -799,19 +846,27 @@ body {
     .site-header {
         padding: 1rem;
     }
-    
+
     .nav-links {
-        gap: 1.5rem;
+        gap: 1rem;
     }
-    
-    .header-spacer {
+
+    .nav-link {
+        font-size: 0.8rem;
+    }
+
+    .header-left {
         display: none;
     }
-    
+
+    .header-right {
+        flex: 0;
+    }
+
     .container {
         padding: 1rem;
     }
-    
+
     .main-title {
         font-size: 2rem;
     }

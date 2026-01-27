@@ -20,6 +20,24 @@ const chatActions = document.querySelector('.chat-actions');
 const sampleQuestions = document.getElementById('sample-questions');
 const loading = document.getElementById('loading');
 
+// ===== THEME TOGGLE =====
+const themeToggle = document.getElementById('theme-toggle');
+
+// Check for saved theme preference or default to dark
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+});
+
+initTheme();
+
 // ===== NAVIGATION =====
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
