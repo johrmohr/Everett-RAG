@@ -21,7 +21,7 @@ AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 
 # Bedrock Model IDs
 EMBEDDING_MODEL_ID = "amazon.titan-embed-text-v2:0"
-LLM_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"  # Cheap & good
+LLM_MODEL_ID = "anthropic.claude-haiku-4-5-20251001-v1:0"
 
 # Chunking Configuration
 CHUNK_SIZE = 1000  # tokens

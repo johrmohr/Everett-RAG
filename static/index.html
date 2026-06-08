@@ -132,13 +132,13 @@
 
             <h2 class="section-header">How It Works</h2>
             <p class="section-text">
-                Retrieval-Augmented Generation (RAG) is an AI architecture that gives Large Language Models (LLMs) access to specific documents at query time: in this case, the Everett Manuscripts. The responses are generated with Claude 3 Haiku by retrieving relevant information directly from Everett's manuscripts before answering. The manuscripts are split into sections called chunks—small passages of roughly 250 tokens each that preserve semantic coherence.
+                Retrieval-Augmented Generation (RAG) is an AI architecture that gives Large Language Models (LLMs) access to specific documents at query time: in this case, the Everett Manuscripts. The responses are generated with Claude Haiku 4.5 by retrieving relevant information directly from Everett's manuscripts before answering. The manuscripts are split into sections called chunks—small passages of roughly 250 tokens each that preserve semantic coherence.
             </p>
             <p class="section-text">
                 These chunks are converted into numerical representations called embeddings using Amazon Titan Embed Text v2, a model that encodes text as 1024-dimensional vectors. These vectors capture semantic meaning: chunks about similar topics will have vectors that are close together in this high-dimensional space. All 4,221 chunk embeddings are stored in a FAISS index, an efficient similarity search library.
             </p>
             <p class="section-text">
-                When you ask a question, that question is also converted into an embedding using the same Titan model. FAISS then finds the chunks whose embeddings are most similar to your question's embedding using cosine similarity. The most relevant chunks—those that pass a similarity threshold—are then passed to Claude 3 Haiku as context, along with your question. Claude reads this context and generates an answer grounded in Everett's actual words, citing the specific manuscripts where the information was found.
+                When you ask a question, that question is also converted into an embedding using the same Titan model. FAISS then finds the chunks whose embeddings are most similar to your question's embedding using cosine similarity. The most relevant chunks—those that pass a similarity threshold—are then passed to Claude Haiku 4.5 as context, along with your question. Claude reads this context and generates an answer grounded in Everett's actual words, citing the specific manuscripts where the information was found.
             </p>
 
             <h2 class="section-header">System Prompt</h2>
